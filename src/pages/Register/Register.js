@@ -8,6 +8,7 @@ import { FiLock, FiUser } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import LoginInput from "../../components/UI/Login/LoginInput/LoginInput";
 
+
 const container = css`
     display: flex;
     flex-direction: column;
@@ -83,17 +84,36 @@ const register = css`
     font-weight: 600;
 `;
 
+const errorMessage = css`
+    margin-left: 5px;
+    margin-bottom: 20px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    color: red;
+
+`;
+
+
 const Register = () => {
+
     const [registerUser, setRegisterUser] = useState({email: "", 
                                                     password: "", 
                                                     name: ""});
 
+    const [errorMessages, setErrorMessages] = useState({email: "", 
+                                                        password: "",
+                                                        name:""});
+   
     const onChangeHandle = (e) => {
         const{ name, value } = e.target;
         setRegisterUser({...registerUser, [name]: value});
-    }
-    
-    const registeSubmit = () => {
+
+    } 
+
+    const registeSubmit = async() => {
+  
         const data = {
             ...registerUser
         }
@@ -103,19 +123,16 @@ const Register = () => {
                 "Content-Type": "application/json",
             }
         }
-        axios
-        .post("http://localhost:8080/auth/signup", JSON.stringify(data), option)
-        .then(response => {
-            console.log("성공");
-            console.log(response);
-        })
-        .catch(error => {
-            console.log("에러");
-            console.log(error.response.data.errorData);
-        });
-        console.log("비동기 테스트");
+        try{
+            const response = await axios.post("http://localhost:8080/auth/signup", JSON.stringify(data), option);
+            setErrorMessages({email: "", password: "", name: "",});
+          
+        } catch(error){
+            setErrorMessages({email: "", password: "", name: "", ...error.response.data.errorData});
+        }
+ 
     }
-
+   
     return (
         <div css={container}>
             <header>
@@ -123,18 +140,24 @@ const Register = () => {
             </header>
             <main css={mainContainer}>
                 <div css={authForm}>
+
                     <label css={inputlabel}>Email</label>
                     <LoginInput type="email" placeholder="Type your email" onChange={onChangeHandle} name="email">
                         <FiUser/>
                     </LoginInput>
+                    <div css={errorMessage}>{errorMessages.email}</div>
+                    
                     <label css={inputlabel}>Password</label>
                     <LoginInput type="password" placeholder="Type your password" onChange={onChangeHandle} name="password">
                         <FiLock/>
                     </LoginInput>
+                    <div css={errorMessage}>{errorMessages.password}</div>
+
                     <label css={inputlabel}>Name</label>
                     <LoginInput type="text" placeholder="Type your name" onChange={onChangeHandle} name="name">
                         <BiRename/>
                     </LoginInput>
+                    <div css={errorMessage}>{errorMessages.name}</div>
                    
                     <button css={loginButton} onClick={registeSubmit}>REGISTER</button>
                 </div>
