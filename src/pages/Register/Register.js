@@ -5,7 +5,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { BiRename } from 'react-icons/bi';
 import { FiLock, FiUser } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LoginInput from "../../components/UI/Login/LoginInput/LoginInput";
 
 
@@ -92,11 +92,11 @@ const errorMessage = css`
     font-weight: 600;
 
     color: red;
-
 `;
 
 
 const Register = () => {
+    const navigate = useNavigate();
 
     const [registerUser, setRegisterUser] = useState({email: "", 
                                                     password: "", 
@@ -120,18 +120,21 @@ const Register = () => {
         console.log(data)
         const option = {
             headers:{
-                "Content-Type": "application/json",
+                "Content-Type": "application/json"
             }
         }
         try{
-            const response = await axios.post("http://localhost:8080/auth/signup", JSON.stringify(data), option);
+            await axios.post("http://localhost:8080/auth/signup", JSON.stringify(data), option);
             setErrorMessages({email: "", password: "", name: "",});
-          
+            alert("회원가입 완료!")
+            navigate("/login");
         } catch(error){
             setErrorMessages({email: "", password: "", name: "", ...error.response.data.errorData});
         }
  
     }
+
+
    
     return (
         <div css={container}>

@@ -1,12 +1,16 @@
 
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import React from 'react';
+import axios from 'axios';
+import React, { useState } from 'react';
 import { FiLock, FiUser } from 'react-icons/fi';
 import { GrGoogle } from 'react-icons/gr';
 import { SiKakao, SiNaver } from 'react-icons/si';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LoginInput from "../../components/UI/Login/LoginInput/LoginInput";
+import { useRecoilState } from 'recoil';
+import { authenticated } from '../../index'
+
 
 const container = css`
     display: flex;
@@ -129,7 +133,59 @@ const register = css`
     font-weight: 600;
 `;
 
+const errorMessage = css`
+    margin-left: 5px;
+    margin-bottom: 20px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    color: red;
+`;
+
+
+
 const Login = () => {
+    
+    const [loginUser, setLoginUser] = useState({email:"", 
+                                                password:""});
+
+    const [errorMessages, setErrorMessages] = useState({email: "",
+                                                        password:""});
+    
+    const [ auth, setAuth] = useRecoilState(authenticated);
+    const navigate = useNavigate();
+
+    const onChangeHandle = (e) => {
+        const{ name, value } = e.target;
+        setLoginUser({...loginUser, [name]:value});
+    }
+
+    const loginSubmit = async() => {
+        const data = {
+            ...loginUser
+        }
+        const option = {
+            headers:{
+                "Content-Type": "application/json"
+            }
+        }
+        try{
+            const response = await axios.post("http://localhost:8080/auth/login", JSON.stringify(data), option);
+            setErrorMessages({email: "", password:""});
+            const accessToken = response.data.grantType + " " + response.data.accessToken;
+            localStorage.setItem("accessToken", accessToken);
+            setAuth(true);
+            navigate("/");
+
+        }catch(error){
+            setErrorMessages({email: "", password:"", ...error.response.data.errorData});
+            alert("이메일 또는 비밀번호를 잘못 입력했습니다.입력하신 내용을 다시 확인해주세요.")
+
+        }
+
+    }
+
     return (
         <div css={container}>
             <header>
@@ -138,15 +194,17 @@ const Login = () => {
             <main css={mainContainer}>
                 <div css={authForm}>
                     <label css={inputlabel}>Email</label>
-                    <LoginInput type="email" placeholder="Type your email">
+                    <LoginInput type="email" placeholder="Type your email" onChange={onChangeHandle} name="email">
                         <FiUser/>
                     </LoginInput>
+                    <div css={errorMessage}>{errorMessages.email}</div>
                     <label css={inputlabel}>Password</label>
-                    <LoginInput type="password" placeholder="Type your password">
+                    <LoginInput type="password" placeholder="Type your password" onChange={onChangeHandle} name="password">
                         <FiLock/>
                     </LoginInput>
+                    <div css={errorMessage}>{errorMessages.password}</div>
                     <div css={forgotPassword}><Link to="/forgot/password">Forgot Password?</Link></div>
-                    <button css={loginButton}>LOGIN</button>
+                    <button css={loginButton} onClick={loginSubmit}>LOGIN</button>
                 </div>
             </main>
 

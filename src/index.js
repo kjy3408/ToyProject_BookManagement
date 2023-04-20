@@ -1,16 +1,32 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
+import { RecoilRoot, atom, selector } from "recoil";
+import App from "./App";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+
+export const authenticated = atom({
+    key:"authenticated",
+    default: false        
+});
+
+export const authenticatedState = selector({
+    key: "authenticatedState",
+    get: ({get}) => {
+        const auth = get(authenticated);
+        return auth;
+    }
+});
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <React.StrictMode>
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
+        <RecoilRoot>
+            <BrowserRouter>
+                <App />
+            </BrowserRouter>
+        </RecoilRoot>
     </React.StrictMode>
 );
 
