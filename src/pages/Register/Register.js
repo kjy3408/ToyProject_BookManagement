@@ -1,12 +1,11 @@
-
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
-import axios from 'axios';
+import { css } from '@emotion/react'
 import React, { useState } from 'react';
-import { BiRename } from 'react-icons/bi';
-import { FiLock, FiUser } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
-import LoginInput from "../../components/UI/Login/LoginInput/LoginInput";
+import LoginInput from '../../components/UI/Login/LoginInput/LoginInput';
+import { FiUser, FiLock } from 'react-icons/fi';
+import { BiRename } from 'react-icons/bi';
+import axios from 'axios';
 
 
 const container = css`

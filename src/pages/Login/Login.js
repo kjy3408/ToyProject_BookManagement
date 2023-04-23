@@ -1,15 +1,14 @@
-
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
-import axios from 'axios';
+import { css } from '@emotion/react'
 import React, { useState } from 'react';
-import { FiLock, FiUser } from 'react-icons/fi';
-import { GrGoogle } from 'react-icons/gr';
-import { SiKakao, SiNaver } from 'react-icons/si';
 import { Link, useNavigate } from 'react-router-dom';
-import LoginInput from "../../components/UI/Login/LoginInput/LoginInput";
+import LoginInput from '../../components/UI/Login/LoginInput/LoginInput';
+import { FiUser, FiLock } from 'react-icons/fi';
+import { BsGoogle } from 'react-icons/bs';
+import { SiNaver, SiKakao } from 'react-icons/si';
+import axios from 'axios';
+import { refreshState } from '../../atoms/Auth/AuthAtoms';
 import { useRecoilState } from 'recoil';
-import { authenticated } from '../../index'
 
 
 const container = css`
@@ -153,7 +152,7 @@ const Login = () => {
     const [errorMessages, setErrorMessages] = useState({email: "",
                                                         password:""});
     
-    const [ auth, setAuth] = useRecoilState(authenticated);
+    const [ refresh, setRefresh ] = useRecoilState(refreshState);
     const navigate = useNavigate();
 
     const onChangeHandle = (e) => {
@@ -175,12 +174,11 @@ const Login = () => {
             setErrorMessages({email: "", password:""});
             const accessToken = response.data.grantType + " " + response.data.accessToken;
             localStorage.setItem("accessToken", accessToken);
-            setAuth(true);
+            setRefresh(false);
             navigate("/");
 
         }catch(error){
             setErrorMessages({email: "", password:"", ...error.response.data.errorData});
-            alert("이메일 또는 비밀번호를 잘못 입력했습니다.입력하신 내용을 다시 확인해주세요.")
 
         }
 
