@@ -1,10 +1,11 @@
-import { css } from "@emotion/react";
+import { css } from '@emotion/react';
 
 export const Reset = css`
-  /* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
+    /* http://meyerweb.com/eric/tools/css/reset/ 
+    v2.0 | 20110126
+    License: none (public domain)
     */
+
     * {
         box-sizing: border-box;
         color: #333;
@@ -36,13 +37,19 @@ export const Reset = css`
         display: block;
     }
     body {
+        line-height: 1;
+    }
+    #root {
+        position: relative;
         margin: 10px auto;
         border: 3px solid #dbdbdb;
         border-radius: 10px;
-        width: 768px;
-        height: 1000px;
-        line-height: 1;
+        padding: 10px;
+        width: 750px;
+        height: 900px;
+        overflow: hidden;
     }
+
     ol, ul {
         list-style: none;
     }

@@ -1,29 +1,29 @@
 import React, { useState } from 'react';
 
 const Callback = () => {
-    
-    const [cnt, setCnt] = useState(0);
+
+    const [ cnt, setCnt ] = useState(0);
     let count1 = 0;
 
-    const fist = (second, third) => {
-        console.log("first 실행(a -> count1의 값 추가를 위한 second호출)")
-        setCnt(() => second(third));
+    const a = (fx, fx2) => {
+        console.log("A함수 실행");
+        setCnt(() => fx(fx2));
     }
 
-    const second = (third) => {
-        console.log("\nsecond 실행(third 호출 및 값 추가)")
+    const b = (fx2) => {
+        console.log("B함수 실행");
         count1 = cnt + 100;
-        third();
+        fx2();
         return count1;
     }
- 
-    const third = () => {
-        console.log("\nthird 실행(count1 출력)");
-        console.log("third(count1의 값): " + count1 + "\n");
+
+    const c = () => {
+        console.log("C함수 호출");
+        console.log(count1);
     }
 
     const clickHandler = () => {
-        fist(second, third)
+        a(b, c);
     }
     
     return (

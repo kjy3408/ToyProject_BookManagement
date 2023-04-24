@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { useQuery } from 'react-query';
 import axios from 'axios';
-import { refreshState } from '../../../atoms/Auth/AuthAtoms';
+import React, { useEffect } from 'react';
+import { useQuery } from 'react-query';
+import { Navigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import { refreshState } from '../../../atoms/Auth/AuthAtoms';
 
 const AuthRouteReactQuery = ({ path, element }) => {
     const [ refresh, setRefresh ] = useRecoilState(refreshState);

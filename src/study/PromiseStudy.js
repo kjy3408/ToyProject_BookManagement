@@ -2,40 +2,37 @@ import React from 'react';
 
 const PromiseStudy = () => {
 
-    
     const a = new Promise((resolve, reject) => {
-        console.log("promise 생성됨~");
-        // resolve("a함수 resolve(then의 result) 결과 리턴(정상 실행)");
-        if(1 !== 1) {
+        console.log("프로미스 호출");
+        if(1 === 1) {
             resolve();
         } else {
-            throw new Error("error(reject 호출)");
+            throw new Error("오류입니다.");
         }
     });
-    
+
     const clickHandler = () => {
         a
         .then(() => {
             console.log("1번 then 호출");
             return new Promise((resolve, reject) => {
-                resolve("리턴 (함수 b호출)");
+                resolve("리턴!!!");
             })
         })
         .catch((error) => {
             console.log(error);
         })
-        .then(b)
+        .then(b);
     }
 
-    const b = (resolveArg) => {
-        console.log(resolveArg);
+    const b = (str) => {
+        console.log(str);
     }
-
 
 
     return (
         <div>
-            <button type='button' onClick={clickHandler}>promiseButton</button>
+            <button onClick={clickHandler}>버튼</button>
         </div>
     );
 };

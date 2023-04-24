@@ -1,7 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 import React from 'react';
 import Input from '../../atoms/Input/Input';
+
 
 const loginInput = css`
     position: relative;
@@ -28,10 +29,10 @@ const LoginInput = ({ type, placeholder, onChange, name, children }) => {
         <div css={loginInput}>
             <div css={icon}>{children}</div>
             <Input 
-            type={type}
+            type={type} 
             placeholder={placeholder} 
-            onChange={onChange} 
-            name={name}/>            
+            onChange={onChange}
+            name={name}/>
         </div>
     );
 };

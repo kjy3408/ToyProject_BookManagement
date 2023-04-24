@@ -1,28 +1,24 @@
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react'
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import LoginInput from '../../components/UI/Login/LoginInput/LoginInput';
-import { FiUser, FiLock } from 'react-icons/fi';
-import { BsGoogle } from 'react-icons/bs';
-import { SiNaver, SiKakao } from 'react-icons/si';
+import { css } from '@emotion/react';
 import axios from 'axios';
-import { refreshState } from '../../atoms/Auth/AuthAtoms';
+import React, { useState } from 'react';
+import { BsGoogle } from 'react-icons/bs';
+import { FiLock, FiUser } from 'react-icons/fi';
+import { SiKakao, SiNaver } from 'react-icons/si';
+import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-
+import { refreshState } from '../../atoms/Auth/AuthAtoms';
+import LoginInput from '../../components/UI/Login/LoginInput/LoginInput';
 
 const container = css`
     display: flex;
     flex-direction: column;
     align-items: center;
-
     padding: 80px 30px;
-
 `;
 
 const logo = css`
     margin: 50px 0px;
-
     font-size: 34px;
     font-weight: 600;
 `;
@@ -31,21 +27,18 @@ const mainContainer = css`
     display: flex;
     flex-direction: column;
     align-items: center;
-
     border: 1px solid #dbdbdb;
     border-radius: 10px;
-
     padding: 40px 20px;
     width: 400px;
 `;
 
 const authForm = css`
-   width: 100%;
+    width: 100%;
 `;
 
-const inputlabel = css`
+const inputLabel = css`
     margin-left: 5px;
-
     font-size: 12px;
     font-weight: 600;
 `;
@@ -54,32 +47,25 @@ const forgotPassword = css`
     display: flex;
     justify-content: flex-end;
     align-items: center;
-
     margin-bottom: 45px;
-
     width: 100%;
-
     font-size: 12px;
     font-weight: 600;
 `;
 
 const loginButton = css`
     margin: 10px 0px;
- 
     border: 1px solid #dbdbdb;
-    border-radius: 8px;
-
+    border-radius: 7px;
     width: 100%;
     height: 50px;
-
     background-color: white;
     font-weight: 900;
-
     cursor: pointer;
-    &:hover{
+    &:hover {
         background-color: #fafafa;
     }
-    &:active{
+    &:active {
         background-color: #eee;
     }
 `;
@@ -88,100 +74,73 @@ const oauth2Container = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    
     margin: 20px;
-
     width: 100%;
-
 `;
 
 const oauth2 = (provider) => css`
     display: flex;
     justify-content: center;
     align-items: center;
-
     margin: 0px 10px;
-
-    border: 3px solid ${provider === "google" ? "#0075ff" :  provider === "naver" ? "#19ce60" : "#ffdc00"};
+    border: 3px solid ${provider === "google" ? "#0075ff" : provider === "naver" ? "#19ce60" : "#ffdc00"};
     border-radius: 50%;
-
     width: 50px;
     height: 50px;
-
     font-size: ${provider === "kakao" ? "30px" : "20px"};
-    
     cursor: pointer;
-    &:hover{
-        background-color: ${provider === "google" ? "#0075ff" :  provider === "naver" ? "#19ce60" : "#ffdc00"};
+    &:hover {
+        background-color: ${provider === "google" ? "#0075ff" : provider === "naver" ? "#19ce60" : "#ffdc00"};
     }
-
 `;
 
 const signupMessage = css`
     margin-top: 20px;
-
     font-size: 14px;
     font-weight: 600;
-
     color: #777;
 `;
 
 const register = css`
     margin-top: 10px;
-
     font-weight: 600;
 `;
 
-const errorMessage = css`
+const errorMsg = css`
     margin-left: 5px;
     margin-bottom: 20px;
-
     font-size: 12px;
-    font-weight: 600;
-
     color: red;
 `;
 
-
-
 const Login = () => {
-    
-    const [loginUser, setLoginUser] = useState({email:"", 
-                                                password:""});
-
-    const [errorMessages, setErrorMessages] = useState({email: "",
-                                                        password:""});
-    
+    const [ loginUser, setLoginUser ] = useState({email: "", password: ""});
+    const [ errorMessages, setErrorMessages ] = useState({email: "", password: ""});
     const [ refresh, setRefresh ] = useRecoilState(refreshState);
+
     const navigate = useNavigate();
 
-    const onChangeHandle = (e) => {
-        const{ name, value } = e.target;
-        setLoginUser({...loginUser, [name]:value});
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setLoginUser({ ...loginUser, [name]: value });
     }
 
-    const loginSubmit = async() => {
-        const data = {
-            ...loginUser
-        }
+    const loginHandleSubmit = async () => {
         const option = {
-            headers:{
+            headers: {
                 "Content-Type": "application/json"
             }
         }
-        try{
-            const response = await axios.post("http://localhost:8080/auth/login", JSON.stringify(data), option);
-            setErrorMessages({email: "", password:""});
+        try {
+            const response = await axios.post("http://localhost:8080/auth/login", JSON.stringify(loginUser), option);
+            setErrorMessages({email: "", password: ""});
             const accessToken = response.data.grantType + " " + response.data.accessToken;
             localStorage.setItem("accessToken", accessToken);
             setRefresh(false);
             navigate("/");
-
-        }catch(error){
-            setErrorMessages({email: "", password:"", ...error.response.data.errorData});
-
+        }catch(error) {
+            setErrorMessages({email: "", password: "", ...error.response.data.errorData});
         }
-
     }
 
     return (
@@ -191,35 +150,35 @@ const Login = () => {
             </header>
             <main css={mainContainer}>
                 <div css={authForm}>
-                    <label css={inputlabel}>Email</label>
-                    <LoginInput type="email" placeholder="Type your email" onChange={onChangeHandle} name="email">
-                        <FiUser/>
+                    <label css={inputLabel}>Email</label>
+                    <LoginInput type="email" placeholder="Type your email" onChange={handleChange} name="email">
+                        <FiUser />
                     </LoginInput>
-                    <div css={errorMessage}>{errorMessages.email}</div>
-                    <label css={inputlabel}>Password</label>
-                    <LoginInput type="password" placeholder="Type your password" onChange={onChangeHandle} name="password">
-                        <FiLock/>
+                    <div css={errorMsg}>{errorMessages.email}</div>
+
+                    <label css={inputLabel}>Password</label>
+                    <LoginInput type="password" placeholder="Type your password" onChange={handleChange} name="password">
+                        <FiLock />
                     </LoginInput>
-                    <div css={errorMessage}>{errorMessages.password}</div>
+                    <div css={errorMsg}>{errorMessages.password}</div>
+
                     <div css={forgotPassword}><Link to="/forgot/password">Forgot Password?</Link></div>
-                    <button css={loginButton} onClick={loginSubmit}>LOGIN</button>
+                    <button css={loginButton} onClick={loginHandleSubmit}>LOGIN</button>
                 </div>
             </main>
 
-            <div css={signupMessage}>OR Sign Up Using</div>
+            <div css={signupMessage}>Or Sign Up Using</div>
 
             <div css={oauth2Container}>
-                <div css={oauth2("google")}><GrGoogle /></div>
+                <div css={oauth2("google")}><BsGoogle /></div>
                 <div css={oauth2("naver")}><SiNaver /></div>
                 <div css={oauth2("kakao")}><SiKakao /></div>
             </div>
 
-             <div css={signupMessage}> OR Sign Up Using</div>
+            <div css={signupMessage}>Or Sign Up Using</div>
 
             <footer>
-                <div css={register}>
-                    <Link to="/register">SIGN UP</Link>
-                </div>
+                <div css={register}><Link to="/register">SIGN UP</Link></div>
             </footer>
         </div>
     );
