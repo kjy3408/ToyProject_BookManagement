@@ -5,6 +5,7 @@ import Login from './pages/Login/Login';
 import Main from './pages/Main/Main';
 import Register from './pages/Register/Register';
 import { Reset } from "./styles/Global/reset";
+import BookDetail from './pages/BookDetail/BookDetail';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route exact path="/login" element={ <AuthRouteReactQuery path="/login" element={<Login />} /> } />
         <Route path="/register" element={ <AuthRouteReactQuery path="/register" element={<Register />} /> } />
         <Route path="/" element={ <AuthRouteReactQuery path="/" element={<Main />} /> } />
+        <Route path="/book/:bookId" element={ <AuthRouteReactQuery path="/book" element={<BookDetail />} /> } />
         <Route path="/admin/search" element={ <AuthRouteReactQuery path="/" element={<Main />} /> } />
       </Routes>
     </>

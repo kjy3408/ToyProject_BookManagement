@@ -6,6 +6,7 @@ import { useQuery } from 'react-query';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import BookCard from '../../components/UI/BookCard/BookCard';
 import { BsMenuDown } from 'react-icons/bs';
+import QueryString from 'qs';
 
 const mainContainer = css`
     padding: 10px;
@@ -58,6 +59,7 @@ const categoryGroup = (isOpen) => css`
     border-radius: 4px;
     padding: 5px;
     width: 180px;
+    /* height: 200px; */
     max-height: 100px;
     background-color: white;
     overflow-y: scroll;
@@ -102,7 +104,8 @@ const Main = () => {
         params: searchParam,
         headers: {
             "Authorization": localStorage.getItem("accessToken")
-        }
+        },
+        paramsSerializer: params => QueryString.stringify(params, {arrayFormat: 'repeat'})
     }
 
     
@@ -114,13 +117,12 @@ const Main = () => {
             if(refresh) {
                 setRefresh(false);
             }
-            console.log(response);
             const totalCount = response.data.totalCount;
             setLastPage(totalCount % 20 === 0 ? totalCount / 20 : Math.ceil(totalCount/20));
             setBooks([...books, ...response.data.bookList])
             setSearchParam({...searchParam, page: searchParam.page + 1});
         },
-        enabled: refresh && searchParam.page < lastPage + 1
+        enabled: refresh && (searchParam.page < lastPage + 1 || lastPage === 0)
     });
 
 
@@ -131,7 +133,6 @@ const Main = () => {
             }
         }
         const response = await axios.get("http://localhost:8080/categories", option);
-        console.log(response.data);
         return response;
     }, {
         enabled: categoryRefresh,
@@ -140,7 +141,7 @@ const Main = () => {
                 setCategoryRefresh(false);
             }
         }
-    })
+    });
 
     const categoryClickHandle = (e) => {
         e.stopPropagation();
@@ -153,15 +154,27 @@ const Main = () => {
 
     const categoryCheckHandle = (e) => {
         if(e.target.checked){
-            setSearchParam({...searchParam, categoryIds: [...searchParam.categoryIds, e.target.value]});
-            console.log(searchParam)
+            setSearchParam({...searchParam, page: 1, categoryIds: [...searchParam.categoryIds, e.target.value]});
         }else {
-            setSearchParam({...searchParam,categoryIds: [...searchParam.categoryIds.filter(id => id !== e.target.value)]});
+            setSearchParam({...searchParam, page: 1, categoryIds: [...searchParam.categoryIds.filter(id => id !== e.target.value)]});
         }
-
-
+        setBooks([]);
+        setRefresh(true);
     }
 
+    const searchInputHandle = (e) => {
+        setSearchParam({...searchParam, page: 1, searchValue: e.target.value});
+        setBooks([]);
+        setRefresh(true);
+    }
+
+    const searchSubmithandle = (e) => {
+        if(e.keyCode === 13){
+            setSearchParam({...searchParam, page: 1});
+            setBooks([]);
+            setRefresh(true);
+        }
+    } 
 
     return (
         <div css={mainContainer}>
@@ -176,16 +189,16 @@ const Main = () => {
                                 ? categories.data.data.map(category => 
                                     (<div key={category.categoryId}>
                                         <input type="checkbox" onChange={categoryCheckHandle} id={"ct-" + category.categoryId} value={category.categoryId}/>
-                                        <label htmlfor={"ct-" + category.categoryId}>{category.categoryName}</label>
+                                        <label htmlFor={"ct-" + category.categoryId}>{category.categoryName}</label>
                                     </div>))
                                 : ""}
                         </div>
                     </button>
-                    <input css={searchInput} type="search" />
+                    <input css={searchInput} type="search" onKeyUp={searchSubmithandle} onChange={searchInputHandle}/>
                 </div>
             </header>
             <main css={main}>
-                {books.length > 0 ? books.map(book => (<BookCard key={book.bookId} book={book}></BookCard>)) : ""}
+                {books.length > 0 ? books.map(book => (<BookCard key={book.bookId} book={book}>{}</BookCard>)) : ""}
                 <div ref={lastBookRef}></div>
                 {/* <BookCard></BookCard> */}
             </main>
