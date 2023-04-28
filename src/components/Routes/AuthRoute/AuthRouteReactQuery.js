@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { Navigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
@@ -15,15 +15,31 @@ const AuthRouteReactQuery = ({ path, element }) => {
         enabled: refresh
     });
 
+    const principal = useQuery(["principal"], async () => {
+        const accessToken = localStorage.getItem("accessToken");
+        const response = await axios.get("http://localhost:8080/auth/principal",{params: {accessToken}})
+        return response;
+    },{
+        enabled: !!localStorage.getItem("accessToken")
+    });
+
     useEffect(() => {
         if(!refresh) {
             setRefresh(true);
         }
-    }, [refresh]);
+    }, [refresh, setRefresh]);
+  
     
     if(isLoading) {
-        console.log("test")
-        return (<div>로딩중...</div>);
+        return <div>로딩중...</div>;
+    }
+    
+    if(principal.date !== undefined){
+        const roles = principal.data.data.authorities.split(",")
+        if(path.starstWith("/admin") && !roles.includes("ROLE_ADMIN")){
+            alert("접근 권한 없음.")
+            return <Navigate to="/" />
+        }
     }
 
     if(!isLoading) {
@@ -37,8 +53,8 @@ const AuthRouteReactQuery = ({ path, element }) => {
         if(permitAll.includes(path)){
             return <Navigate to="/" />;
         }
-        
         return element;
+      
     }
 };
 
